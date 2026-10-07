@@ -1,8 +1,10 @@
 require("dotenv").config();
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId} = require("mongodb");
 const client = new MongoClient(process.env.MONGO_URI);
 const db = client.db("ICS418Y-PA2");
 const accounts = db.collection("accounts");
+const projects = db.collection("projects");
+const projectMemberships = db.collection("projectMemberships");
 
 const express = require("express");
 const cors = require("cors");
@@ -32,6 +34,8 @@ async function connectDatabase() {
     }
 }
 connectDatabase();
+
+///////////////Accounts/////////////////////////////////////////////////////////////////
 
 app.post("/signup", async (req, res) => {
     const f_name = req.body.f_name;
@@ -112,6 +116,77 @@ app.post("/login", async (req, res) => {
                 else {
                     res.status(200).json({
                         message: "Login successful"
+                    });
+                }
+            }
+        } catch (error) {
+            console.error(error);
+
+            res.status(500).json({
+                message: "Server Error"
+            });
+        }
+    }
+});
+
+app.get("/accounts", async (req, res) => {
+    try{
+        const allAccounts = await accounts.find({}).toArray();
+    } catch(error){
+        res.status(500).json({
+            message: "Server Error"
+        });
+    }
+})
+
+///////////////////////Projects//////////////////////////////////////////////////////////////////////////////////
+
+app.post("/projects", async(req, res) => {
+    const projName = req.body.projName;
+    const projDescrip = req.body.projDescrip;
+    const projStatus = req.body.projStatus;
+    const projLead = req.body.projLead;
+
+    if(projName === "" || projDescrip === "" || projStatus === "" || projLead === "") {
+        res.status(400).json({
+            message: "one or more fields is empty"
+        })
+    }
+    else {
+        try {
+            const projLeadUsername = await accounts.findOne({
+                username: projLead
+            });
+            if(projLeadUsername === null) {
+                res.status(400).json({
+                    message: "The Team Leader Username does not exist"
+                });
+            }
+            else {
+                const projLeadId = new ObjectId(projLeadUsername);
+                    
+                const existingProject = await projects.findOne({
+                    projName: projName,
+                    projLead: projLeadId
+                });
+
+                if(existingProject === null) {
+                    const project = {
+                        projName: projName,
+                        projDescrip: projDescrip,
+                        projStatus: projStatus,
+                        projLead: projLeadId
+                    };
+                    await projects.insertOne(project);
+                    const projectId = projects.insertedId;
+
+                    res.status(201).json({
+                        message: "project created"
+                    });
+                }
+                else {
+                    res.status(409).json({
+                        message: "An account with that name and team leader already exists"
                     });
                 }
             }

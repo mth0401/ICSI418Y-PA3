@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState } from 'react';
 import Signup from './components/Signup';
-import Login from './components/Login'
+import Login from './components/Login';
+import ProjectCreation from './components/ProjectCreation';
 import './App.css'
 
 function App() {
@@ -11,6 +12,9 @@ function App() {
       <br />
       <br />
       <Login />
+      <br />
+      <br />
+      <ProjectCreation />
     </div>
   );
 }
