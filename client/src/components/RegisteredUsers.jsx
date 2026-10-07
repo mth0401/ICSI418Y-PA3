@@ -28,4 +28,10 @@ function RegisteredAccounts() {
             setMessage("could not reach server")
         }
     }
+
+    return(
+        <div>
+            <select value={}
+        </div>
+    )
 }
