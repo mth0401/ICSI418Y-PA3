@@ -132,6 +132,7 @@ app.post("/login", async (req, res) => {
 app.get("/accounts", async (req, res) => {
     try{
         const allAccounts = await accounts.find({}).toArray();
+        res.json(allAccounts);
     } catch(error){
         res.status(500).json({
             message: "Server Error"
@@ -163,7 +164,7 @@ app.post("/projects", async(req, res) => {
                 });
             }
             else {
-                const projLeadId = new ObjectId(projLeadUsername);
+                const projLeadId = projLeadUsername._id;
                     
                 const existingProject = await projects.findOne({
                     projName: projName,
@@ -177,8 +178,8 @@ app.post("/projects", async(req, res) => {
                         projStatus: projStatus,
                         projLead: projLeadId
                     };
-                    await projects.insertOne(project);
-                    const projectId = projects.insertedId;
+                    const projectAdded = await projects.insertOne(project);
+                    const projectId = projectAdded.insertedId;
 
                     res.status(201).json({
                         message: "project created"

@@ -5,17 +5,20 @@ import ProjectCreation from './components/ProjectCreation';
 import './App.css'
 
 function App() {
+  const [page, setPage] = useState("login");
 
   return (
-    <div>
-      <Signup />
-      <br />
-      <br />
-      <Login />
-      <br />
-      <br />
-      <ProjectCreation />
-    </div>
+      <div>
+          <nav>
+              <button onClick={() => setPage("signup")}>Sign Up</button>
+              <button onClick={() => setPage("login")}>Login</button>
+              <button onClick={() => setPage("createProject")}>Create Project</button>
+          </nav>
+
+          {page === "signup" && <Signup />}
+          {page === "login" && <Login />}
+          {page === "createProject" && <ProjectCreation />}
+      </div>
   );
 }
 

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import RegisteredAccounts from './RegisteredAccounts';
 
 function ProjectCreation() {
     const [projName, setProjName] = useState("");
@@ -24,7 +25,7 @@ function ProjectCreation() {
                     })
                 }
             );
-
+            console.log({ projName, projDescrip, projStatus, projLead });
             const data = await projCredentials.json();
             setMessage(data.message);
         }
@@ -64,9 +65,7 @@ function ProjectCreation() {
                 </select>
                 <br />
                 <label>Lead Team Member Username: </label>
-                <input 
-                    
-                />
+                    <RegisteredAccounts onSelectAccount={setProjLead}/>
                 <br />
                 <button type="submit">Create Project</button>
             </form>
@@ -75,4 +74,4 @@ function ProjectCreation() {
     );
 }
 
-export default ProjectCreation;
+export default ProjectCreation
