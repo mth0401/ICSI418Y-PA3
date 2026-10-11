@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { MongoClient, ObjectId} = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 const client = new MongoClient(process.env.MONGO_URI);
 const db = client.db("ICS418Y-PA2");
 const accounts = db.collection("accounts");
