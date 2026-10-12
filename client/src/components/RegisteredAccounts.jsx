@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 
 function RegisteredAccounts({onSelectAccount}) {
     const [accounts, setAccounts] = useState([]);
+    const [message, setMessage] = useState("");
 
     useEffect(() => {
         async function fetchAccounts() {
@@ -10,14 +11,14 @@ function RegisteredAccounts({onSelectAccount}) {
                     "http://localhost:9000/accounts");
 
                 if(!registeredAccountCredentials.ok) {
-                    console.error("failed to fetch accounts");
+                    setMessage("failed to fetch accounts");
                 }
 
                 const data = await registeredAccountCredentials.json();
                 setAccounts(data);
                 }
             catch(error) {
-                console.error("could not reach server")
+                setMessage("could not reach server")
             }
         }
         fetchAccounts();
@@ -35,6 +36,7 @@ function RegisteredAccounts({onSelectAccount}) {
                     <option key={account._id} value={account.username}>{account.username}</option>
                 ))}
             </select>
+            <p>{message}</p>
         </div>
     )
 }

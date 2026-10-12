@@ -25,7 +25,7 @@ function ProjectCreation() {
                     })
                 }
             );
-            console.log({ projName, projDescrip, projStatus, projLead });
+
             const data = await projCredentials.json();
             setMessage(data.message);
         }

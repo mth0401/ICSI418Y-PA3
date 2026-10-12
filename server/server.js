@@ -161,7 +161,7 @@ app.post("/projects", async(req, res) => {
             if(projLeadUsername === null) {
                 res.status(400).json({
                     message: "The Team Leader Username does not exist"
-                });
+                })
             }
             else {
                 const projLeadId = projLeadUsername._id;
@@ -198,5 +198,16 @@ app.post("/projects", async(req, res) => {
                 message: "Server Error"
             });
         }
+    }
+});
+
+app.get("/projects", async (req, res) => {
+    try{
+        const allProjects = await projects.find({}).toArray();
+        res.json(allProjects);
+    } catch(error){
+        res.status(500).json({
+            message: "Server Error"
+        });
     }
 });
