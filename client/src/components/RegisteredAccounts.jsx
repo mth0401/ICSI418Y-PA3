@@ -31,9 +31,9 @@ function RegisteredAccounts({onSelectAccount}) {
     return(
         <div>
             <select onChange={handleChange} defaultValue="">
-                <option>Select Project Lead</option>
+                <option value="">Select an Account</option>
                 {accounts.map((account) => (
-                    <option key={account._id} value={account.username}>{account.username}</option>
+                    <option key={account._id} value={account._id}>{account.username}</option>
                 ))}
             </select>
             <p>{message}</p>

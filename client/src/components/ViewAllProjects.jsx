@@ -8,14 +8,14 @@ function ViewAllProjects() {
     useEffect(() => {
         async function fetchProjects() {
             try {
-                const response = await fetch(
+                const projectCredentials = await fetch(
                     "http://localhost:9000/projects"
                 );
 
-                const data = await response.json();
+                const data = await projectCredentials.json();
                 setProjects(data);
             } catch (error) {
-                setMessage("Failed to fetch projects:");
+                setMessage("Failed to fetch projects");
             }
         }
 
@@ -33,8 +33,16 @@ function ViewAllProjects() {
             }
         }
 
-        fetchAccounts();
-        fetchProjects();
+        async function fetchTogether() {
+            try {
+                await fetchAccounts();
+                await fetchProjects();
+            } catch(error) {
+                setMessage("Failed to fetch data");
+            }
+        }
+
+        fetchTogether();
     }, []);
 
     return (

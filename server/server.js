@@ -73,8 +73,6 @@ app.post("/signup", async (req, res) => {
                 });
             }
         } catch (error) {
-            console.error(error);
-
             res.status(500).json({
                 message: "Server Error"
             });
@@ -120,8 +118,6 @@ app.post("/login", async (req, res) => {
                 }
             }
         } catch (error) {
-            console.error(error);
-
             res.status(500).json({
                 message: "Server Error"
             });
@@ -181,19 +177,23 @@ app.post("/projects", async(req, res) => {
                     const projectAdded = await projects.insertOne(project);
                     const projectId = projectAdded.insertedId;
 
+                    const leadMembership = {
+                        projectId: projectId,
+                        projLeadId: projLeadId
+                    }
+                    await projectMemberships.insertOne(leadMembership);
+
                     res.status(201).json({
                         message: "project created"
                     });
                 }
                 else {
                     res.status(409).json({
-                        message: "An account with that name and team leader already exists"
+                        message: "A project with that name and team leader already exists"
                     });
                 }
             }
         } catch (error) {
-            console.error(error);
-
             res.status(500).json({
                 message: "Server Error"
             });
@@ -211,3 +211,49 @@ app.get("/projects", async (req, res) => {
         });
     }
 });
+
+app.get("/projects/:projectId/members", async (req, res) => {
+    try{
+        if(!ObjectId.isValid(req.params.projectId)) {
+            res.status(400).json({
+                message: "Invalid project Id"
+            });
+        }
+        else {
+            const projectId = new ObjectId(req.params.projectId);
+            const project = await projects.findOne({_id: projectId});
+
+            if(project === null) {
+                res.status(404).json({
+                    message: "Project not found"
+                });
+            }
+            else {
+                const memberships = await projectMemberships.find({projectId: projectId}).toArray();
+                res.json(memberships);
+            }
+        }
+    } catch(error){
+        res.status(500).json({
+            message: "Server Error"
+        });
+    }
+});
+
+app.post("/projects/:projectId/members", async (req, res) => {
+    try {
+        if(!ObjectId.isValid(req.params.projectId)) {
+            res.status(400).json({
+                message: "Invalid project Id"
+            });
+        }
+        else {
+            const projectId = new ObjectId(req.params.projectId);
+            const addedUser = req.body.onSelectAccount;
+        }
+    } catch(error) {
+        res.status(500).json({
+            message: "Server Error"
+        });
+    }
+})

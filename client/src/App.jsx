@@ -2,8 +2,9 @@ import { useState } from 'react';
 import Signup from './components/Signup';
 import Login from './components/Login';
 import ProjectCreation from './components/ProjectCreation';
-import ViewAllProjects from './components/ViewAllProjects'
-import './App.css'
+import ViewAllProjects from './components/ViewAllProjects';
+import ProjectMemberships from './components/ManageProjectMemberships';
+import './App.css';
 
 function App() {
   const [page, setPage] = useState("login");
@@ -15,12 +16,14 @@ function App() {
               <button onClick={() => setPage("login")}>Login</button>
               <button onClick={() => setPage("createProject")}>Create Projects</button>
               <button onClick={() => setPage("projects")}>View Projects</button>
+              <button onClick={() => setPage("projectMemberships")}>Project Memberships</button>
           </nav>
 
           {page === "signup" && <Signup />}
           {page === "login" && <Login />}
           {page === "createProject" && <ProjectCreation />}
           {page === "projects" && <ViewAllProjects />}
+          {page === "projectMemberships" && <ProjectMemberships />}
       </div>
   );
 }
