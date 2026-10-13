@@ -178,8 +178,8 @@ app.post("/projects", async(req, res) => {
                     const projectId = projectAdded.insertedId;
 
                     const leadMembership = {
-                        projectId: projectId,
-                        projLeadId: projLeadId
+                        projId: projectId,
+                        projMemberId: projLeadId
                     }
                     await projectMemberships.insertOne(leadMembership);
 
@@ -229,7 +229,7 @@ app.get("/projects/:projectId/members", async (req, res) => {
                 });
             }
             else {
-                const memberships = await projectMemberships.find({projectId: projectId}).toArray();
+                const memberships = await projectMemberships.find({projId: projectId}).toArray();
                 res.json(memberships);
             }
         }
@@ -242,14 +242,49 @@ app.get("/projects/:projectId/members", async (req, res) => {
 
 app.post("/projects/:projectId/members", async (req, res) => {
     try {
-        if(!ObjectId.isValid(req.params.projectId)) {
+        if(!ObjectId.isValid(req.params.projectId) || !ObjectId.isValid(req.body.accountId)) {
             res.status(400).json({
-                message: "Invalid project Id"
+                message: "Invalid project or account ID"
             });
         }
         else {
             const projectId = new ObjectId(req.params.projectId);
-            const addedUser = req.body.onSelectAccount;
+            const addedAccount = new ObjectId(req.body.accountId);
+            const project = await projects.findOne({_id: projectId});
+            const account = await accounts.findOne({_id: addedAccount});
+
+            if(project === null) {
+                res.status(404).json({
+                    message: "Project not found"
+                });
+            }
+            else if(account === null) {
+                res.status(404).json({
+                    message: "Account not found"
+                });
+            }
+            else {
+                const membership = await projectMemberships.findOne({
+                    projId: projectId,
+                    projMemberId: addedAccount
+                });
+
+                if(membership === null) {
+                    await projectMemberships.insertOne({
+                        projId: projectId,
+                        projMemberId: addedAccount
+                    });
+
+                    res.status(201).json({
+                        message: "Account added to project"
+                    });
+                }
+                else {
+                    res.status(409).json({
+                        message: "That account is already associated with this project"
+                    });
+                }
+            }
         }
     } catch(error) {
         res.status(500).json({

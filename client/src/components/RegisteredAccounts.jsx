@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-function RegisteredAccounts({onSelectAccount}) {
+function RegisteredAccounts({onSelectAccount, useUsername}) {
     const [accounts, setAccounts] = useState([]);
     const [message, setMessage] = useState("");
 
@@ -32,9 +32,19 @@ function RegisteredAccounts({onSelectAccount}) {
         <div>
             <select onChange={handleChange} defaultValue="">
                 <option value="">Select an Account</option>
-                {accounts.map((account) => (
-                    <option key={account._id} value={account._id}>{account.username}</option>
-                ))}
+                {accounts.map((account) => {
+                    let accountValue;
+                    if(useUsername) {
+                        accountValue = account.username;
+                    }
+                    else {
+                        accountValue = account._id;
+                    }
+
+                    return (
+                    <option key={account._id} value={accountValue}>{account.username}</option>
+                    );
+                })}
             </select>
             <p>{message}</p>
         </div>

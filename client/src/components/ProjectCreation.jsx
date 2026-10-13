@@ -65,7 +65,7 @@ function ProjectCreation() {
                 </select>
                 <br />
                 <label>Lead Team Member Username: </label>
-                    <RegisteredAccounts onSelectAccount={setProjLead}/>
+                    <RegisteredAccounts onSelectAccount={setProjLead} useUsername={true}/>
                 <br />
                 <button type="submit">Create Project</button>
             </form>
