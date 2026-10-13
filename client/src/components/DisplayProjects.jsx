@@ -35,7 +35,7 @@ function DisplayProjects({onSelectProject}) {
             </select>
             <p>{message}</p>
         </div>
-    )
+    );
 }
 
-export default DisplayProjects;
+export default DisplayProjects

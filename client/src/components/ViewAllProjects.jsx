@@ -29,7 +29,7 @@ function ViewAllProjects() {
                 setAccounts(data);
             }
             catch(error) {
-                setMessage("could not reach server")
+                setMessage("could not reach server");
             }
         }
 
@@ -67,4 +67,4 @@ function ViewAllProjects() {
     );
 }
 
-export default ViewAllProjects;
+export default ViewAllProjects

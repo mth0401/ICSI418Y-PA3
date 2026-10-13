@@ -134,7 +134,7 @@ app.get("/accounts", async (req, res) => {
             message: "Server Error"
         });
     }
-})
+});
 
 ///////////////////////Projects//////////////////////////////////////////////////////////////////////////////////
 
@@ -215,7 +215,7 @@ app.get("/projects", async (req, res) => {
 app.get("/projects/:projectId/members", async (req, res) => {
     try{
         if(!ObjectId.isValid(req.params.projectId)) {
-            res.status(400).json({
+            res.status(404).json({
                 message: "Invalid project Id"
             });
         }
@@ -243,7 +243,7 @@ app.get("/projects/:projectId/members", async (req, res) => {
 app.post("/projects/:projectId/members", async (req, res) => {
     try {
         if(!ObjectId.isValid(req.params.projectId) || !ObjectId.isValid(req.body.accountId)) {
-            res.status(400).json({
+            res.status(404).json({
                 message: "Invalid project or account ID"
             });
         }
@@ -291,4 +291,64 @@ app.post("/projects/:projectId/members", async (req, res) => {
             message: "Server Error"
         });
     }
-})
+});
+
+app.delete("/projects/:projectId/members/:accountId", async (req, res) => {
+    try {
+        if(!ObjectId.isValid(req.params.projectId) || !ObjectId.isValid(req.params.accountId)) {
+            res.status(400).json({
+                message: "Invalid project or account ID"
+            });
+        }
+        else {
+            const projectId = new ObjectId(req.params.projectId);
+            const removeAccount = new ObjectId(req.params.accountId);
+            const project = await projects.findOne({_id: projectId});
+            const account = await accounts.findOne({_id: removeAccount});
+
+            if(project === null) {
+                res.status(404).json({
+                    message: "Project not found"
+                });
+            }
+            else if(account === null) {
+                res.status(404).json({
+                    message: "Account not found"
+                });
+            }
+            else {
+                if(account._id.toString() === project.projLead.toString()) {
+                    res.status(400).json({
+                        message: "Cannot remove project lead"
+                    });
+                }
+                else {
+                    const membership = await projectMemberships.findOne({
+                        projId: projectId,
+                        projMemberId: removeAccount
+                    });
+
+                    if(membership != null) {
+                        await projectMemberships.deleteOne({
+                            projId: projectId,
+                            projMemberId: removeAccount
+                        });
+
+                        res.status(200).json({
+                            message: "Account successfully removed from project"
+                        });
+                    }
+                    else {
+                        res.status(400).json({
+                            message: "That account is not associated with this project"
+                        });
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: "Server Error"
+        });
+    }
+});

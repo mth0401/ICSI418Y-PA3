@@ -43,7 +43,7 @@ function ProjectMemberships() {
                 await fetchAccounts();
                 await fetchProjects();
             } catch(error) {
-                setMessage("Failed to fetch data");
+                setMessage("could not reach server");
             }
         }
 
@@ -51,25 +51,22 @@ function ProjectMemberships() {
     }, []);
 
     async function fetchMemberships() {
-        try {
-            if(!selectedProject) {
-                setAccountMemberships([]);
-                return;
-            }
-            const memberships = await fetch(
-                `http://localhost:9000/projects/${selectedProject}/members`
-            );
+            try {
+                if(!selectedProject) {
+                    setAccountMemberships([]);
+                }
+                else {
+                    const memberships = await fetch(
+                        "http://localhost:9000/projects/"+ selectedProject +"/members"
+                    );
 
-            if(!memberships.ok) {
-                setMessage("Failed to fetch memberships")
+                    const data = await memberships.json();
+                    setAccountMemberships(data);
+                }
+            } catch(error) {
+                setMessage("could not reach server");
             }
-
-            const data = await memberships.json();
-            setAccountMemberships(data);
-        } catch(error) {
-            setMessage("Failed to fetch memberships")
         }
-    }
 
     useEffect(() => {
         fetchMemberships();
@@ -84,29 +81,57 @@ function ProjectMemberships() {
         try {
             if (!selectedAccount || !selectedProject) {
                 setMessage("Please select a project and an account");
-                return;
             }
+            else {
+                const memberCredentials = await fetch(
+                    "http://localhost:9000/projects/"+ selectedProject +"/members", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            accountId: selectedAccount
+                        })
+                    }
+                );
 
-            const memberCredentials = await fetch(
-                `http://localhost:9000/projects/${selectedProject}/members`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        accountId: selectedAccount
-                    })
-                }
-            );
-
-            const data = await memberCredentials.json();
-            setMessage(data.message);
-            await fetchMemberships();
+                const data = await memberCredentials.json();
+                setMessage(data.message);
+                await fetchMemberships();
+            }
         } catch(error) {
-            setMessage("could not reach server")
+            setMessage("could not reach server");
         }
 
 
+    };
+
+    async function handleDeleteMember(event) {
+        event.preventDefault();
+        try {
+            if (!selectedAccount || !selectedProject) {
+                setMessage("Please select a project and an account");
+            }
+            else {
+                const memberCredentials = await fetch(
+                    "http://localhost:9000/projects/"+ selectedProject +"/members/"+ selectedAccount, {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            accountId: selectedAccount
+                        })
+                    }
+                );
+
+                const data = await memberCredentials.json();
+                setMessage(data.message);
+                await fetchMemberships();
+            }
+        } catch (error) {
+            setMessage("could not reach server");
+        }
     }
 
     return (
@@ -118,10 +143,11 @@ function ProjectMemberships() {
             {projectData && selectedProject && (
                 <div>
                     <button onClick={handleAddMember}>Add Member</button>
+                    <button onClick={handleDeleteMember}>Delete Member</button>
                     <p>Selected Project ID: {selectedProject}</p>
                     <p>Project Description: {projectData.projDescrip}</p>
                     <h3>Members</h3>
-                    {accountMemberships.map(member => {
+                    {accountMemberships.map((member) => {
                         const account = accounts.find(
                             account => account._id === member.projMemberId
                         )
@@ -131,7 +157,7 @@ function ProjectMemberships() {
             )}
             <h3>{message}</h3>
         </div>
-    );
+    )
 }
 
-export default ProjectMemberships;
+export default ProjectMemberships

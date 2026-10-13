@@ -10,22 +10,18 @@ function RegisteredAccounts({onSelectAccount, useUsername}) {
                 const registeredAccountCredentials = await fetch(
                     "http://localhost:9000/accounts");
 
-                if(!registeredAccountCredentials.ok) {
-                    setMessage("failed to fetch accounts");
-                }
-
                 const data = await registeredAccountCredentials.json();
                 setAccounts(data);
                 }
             catch(error) {
-                setMessage("could not reach server")
+                setMessage("could not reach server");
             }
         }
         fetchAccounts();
     }, []);
 
     function handleChange(event) {
-        onSelectAccount(event.target.value)
+        onSelectAccount(event.target.value);
     }
 
     return(
@@ -48,7 +44,7 @@ function RegisteredAccounts({onSelectAccount, useUsername}) {
             </select>
             <p>{message}</p>
         </div>
-    )
+    );
 }
 
 export default RegisteredAccounts

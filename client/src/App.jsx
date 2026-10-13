@@ -10,20 +10,18 @@ function App() {
   const [page, setPage] = useState("login");
 
   return (
-      <div>
-          <nav>
-              <button onClick={() => setPage("signup")}>Sign Up</button>
-              <button onClick={() => setPage("login")}>Login</button>
-              <button onClick={() => setPage("createProject")}>Create Projects</button>
-              <button onClick={() => setPage("projects")}>View Projects</button>
-              <button onClick={() => setPage("projectMemberships")}>Project Memberships</button>
-          </nav>
+        <div>
+            <button onClick={() => setPage("signup")}>Sign Up</button>
+            <button onClick={() => setPage("login")}>Login</button>
+            <button onClick={() => setPage("createProject")}>Create Projects</button>
+            <button onClick={() => setPage("projects")}>View Projects</button>
+            <button onClick={() => setPage("projectMemberships")}>Project Memberships</button>
 
-          {page === "signup" && <Signup />}
-          {page === "login" && <Login />}
-          {page === "createProject" && <ProjectCreation />}
-          {page === "projects" && <ViewAllProjects />}
-          {page === "projectMemberships" && <ProjectMemberships />}
+            {page === "signup" && <Signup />}
+            {page === "login" && <Login />}
+            {page === "createProject" && <ProjectCreation />}
+            {page === "projects" && <ViewAllProjects />}
+            {page === "projectMemberships" && <ProjectMemberships />}
       </div>
   );
 }
